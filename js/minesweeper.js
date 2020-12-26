@@ -25,21 +25,23 @@ const max_width = 30;
 const max_height = 16;
 
 
-let numbers=[[]];
+let numbers = [
+    []
+];
 let face_default, face_died, face_click_cell, face_click, face_clear;
 let gameState = 'play';
 
-const preload =_=> {
-    for(let i = 0; i < 10; i++){
+const preload = _ => {
+    for (let i = 0; i < 10; i++) {
         numbers[i] = new Image();
-        numbers[i].src = 'images/'+i+'.png';
+        numbers[i].src = 'images/' + i + '.png';
     }
     numbers[10] = new Image();
     numbers[10].src = 'images/-.png';
 
-    for(let i = 1; i <= 8; i++){
+    for (let i = 1; i <= 8; i++) {
         let img = new Image();
-        img.src = 'images/m_'+i+'.png'
+        img.src = 'images/m_' + i + '.png'
     }
 
     face_default = new Image();
@@ -68,7 +70,7 @@ const createTable = (width, height, mine) => {
     height = height < min_height ? min_height : height > max_height ? max_height : height;
     mineCount = mine;
     localStorage.setItem('mineCount', mineCount);
-    localStorage.setItem('size', width+'x'+height);
+    localStorage.setItem('size', width + 'x' + height);
     table = [];
     let add = '';
     for (let y = 0; y < height; y++) {
@@ -100,23 +102,23 @@ const createTable = (width, height, mine) => {
     menu_game.style.display = 'none';
     menu_help.style.display = 'none';
     const levels = document.querySelectorAll('.level');
-    for(let i = 0; i < levels.length; i++){
+    for (let i = 0; i < levels.length; i++) {
         levels[i].classList.remove('checked');
     }
     level = localStorage.getItem('level') || 'beginner';
     document.querySelector(`#${level}`).classList.add('checked');
 }
-menu_help.parentNode.addEventListener('mouseover', e =>{
+menu_help.parentNode.addEventListener('mouseover', e => {
     menu_help.style.display = 'block';
 })
-menu_help.parentNode.addEventListener('mouseout', e =>{
+menu_help.parentNode.addEventListener('mouseout', e => {
     menu_help.style.display = 'none';
 })
 
-menu_game.parentNode.addEventListener('mouseover', e =>{
+menu_game.parentNode.addEventListener('mouseover', e => {
     menu_game.style.display = 'block';
 })
-menu_game.parentNode.addEventListener('mouseout', e =>{
+menu_game.parentNode.addEventListener('mouseout', e => {
     menu_game.style.display = 'none';
 })
 
@@ -130,30 +132,29 @@ let clickState = 0;
 let clickTimer = null;
 
 document.body.addEventListener('mousedown', e => {
-    if(e.target == document.body) return;
-    if(e.which != clickState){
+    if (e.target == document.body) return;
+    if (e.which != clickState) {
         clickState += e.which;
     }
     startX = e.offsetX;
     startY = e.offsetY;
     mouseDown = true;
-    if(gameState != 'play'){
+    if (gameState != 'play') {
         return;
     }
-    if(e.target.className.indexOf('cell') != -1){
+    if (e.target.className.indexOf('cell') != -1) {
         clickedCell = e.target;
-        if(e.which == 1) {
+        if (e.which == 1) {
             setFace(face_click_cell);
-        }
-        else if(e.which == 3){
-            if(clickedCell.dataset['number'] != undefined){
+        } else if (e.which == 3) {
+            if (clickedCell.dataset['number'] != undefined) {
                 return;
             }
-            if(clickedCell.dataset['state'] == undefined){
+            if (clickedCell.dataset['state'] == undefined) {
                 clickedCell.dataset['state'] = 'flag';
-            }else if(clickedCell.dataset['state'] == 'flag'){
+            } else if (clickedCell.dataset['state'] == 'flag') {
                 clickedCell.dataset['state'] = 'qm';
-            }else{
+            } else {
                 clickedCell.removeAttribute('data-state');
             }
             clickedCell = null;
@@ -165,269 +166,270 @@ let firstClick = false;
 let timer_time = 0;
 let timer = null;
 document.body.addEventListener('mouseup', e => {
-    if(gameState != 'play' || e.target == document.body){
+    if (gameState != 'play' || e.target == document.body) {
         mouseDown = false;
         tempTarget = null;
         clickedCell = null;
         return;
     }
-    if(e.target == document.body){   
+    if (e.target == document.body) {
         setFace(face_default);
         return;
-    }     
-    if(faceCursor) {
+    }
+    if (faceCursor) {
         faceCursor = false;
         return;
     }
     clickState -= e.which;
-    if(e.which == 3) return;
+    if (e.which == 3) return;
 
-    if(gameState != 'play') return;
-    if(e.target.className.indexOf('cell') != -1){
-        if(firstClick == false){
-            while(true){
-                if(getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0'){
+    if (gameState != 'play') return;
+    if (e.target.className.indexOf('cell') != -1) {
+        if (firstClick == false) {
+            while (true) {
+                if (getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0') {
                     createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
-                }else{
+                } else {
                     break;
                 }
             }
             firstClick = true;
         }
         setFace(face_default)
-        if(timer == null){
+        if (timer == null) {
             timer_time++;
-            if(sound == 'on'){
+            if (sound == 'on') {
                 sound_tick.play();
-            }            
+            }
             setTime(timer_time)
-            timer = setInterval(function(){
+            timer = setInterval(function () {
                 timer_time++;
                 setTime(timer_time)
-            },1000);
+            }, 1000);
         }
         fill(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1]));
         const cells = document.querySelectorAll('.cell');
         let c = 0;
-        for(let i = 0; i < cells.length; i++){
-            if(cells[i].dataset['number'] != undefined){
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].dataset['number'] != undefined) {
                 c++;
             }
         }
-        if(c == cells.length - mineCount){
+        if (c == cells.length - mineCount) {
             win();
         }
     }
-    
+
     mouseDown = false;
     tempTarget = null;
     clickedCell = null;
 })
 
-const fill = (x, y)=>{
-    if(getCell(x,y) == undefined){
+const fill = (x, y) => {
+    if (getCell(x, y) == undefined) {
         return;
     }
     const target = document.querySelector(`.cell[data-position='${x},${y}']`);
-    if(target == null || target.dataset['number'] != undefined && target.dataset['number'] != '-1'){
+    if (target == null || target.dataset['number'] != undefined && target.dataset['number'] != '-1') {
         return;
     }
-    if(target.dataset['state'] == 'flag'){
+    if (target.dataset['state'] == 'flag') {
         return;
     }
-    if(gameState != 'play'){
+    if (gameState != 'play') {
         return;
     }
-    if(getCell(x,y) == '0'){
+    if (getCell(x, y) == '0') {
         target.removeAttribute('data-state');
         target.dataset['number'] = '0';
-        fill(x-1, y-1);
-        fill(x, y-1);
-        fill((x+1), y-1);
-        
-        fill(x-1, y);
-        fill((x+1), y);
+        fill(x - 1, y - 1);
+        fill(x, y - 1);
+        fill((x + 1), y - 1);
 
-        fill(x-1, (y+1));
-        fill(x, (y+1));
-        fill((x+1), (y+1));
-    }else if(getCell(x, y) != 'm'){
+        fill(x - 1, y);
+        fill((x + 1), y);
+
+        fill(x - 1, (y + 1));
+        fill(x, (y + 1));
+        fill((x + 1), (y + 1));
+    } else if (getCell(x, y) != 'm') {
         target.dataset['number'] = getCell(x, y);
-    }else if(getCell(x, y) == 'm'){
+    } else if (getCell(x, y) == 'm') {
         lose(x, y);
     }
 }
 
-const lose = (a,b) =>{
+const lose = (a, b) => {
     const width = Number(localStorage.getItem('size').split('x')[0]);
     const height = Number(localStorage.getItem('size').split('x')[0]);
-    for(let x = 0; x < width; x++){
-        for(let y = 0; y < height; y++){
-            if(document.querySelector(`.cell[data-position='${x},${y}']`) == null){
+    for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+            if (document.querySelector(`.cell[data-position='${x},${y}']`) == null) {
                 continue;
             }
-            if(document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] == 'flag' && getCell(x, y) != 'm'){
+            if (document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] == 'flag' && getCell(x, y) != 'm') {
                 document.querySelector(`.cell[data-position='${x},${y}']`).dataset['number'] = 'm_flaged';
-            }else if(getCell(x, y) == 'm' && document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] != 'flag'){
+            } else if (getCell(x, y) == 'm' && document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] != 'flag') {
                 document.querySelector(`.cell[data-position='${x},${y}']`).dataset['number'] = 'm';
             }
         }
     }
-    document.querySelector(`.cell[data-position='${a},${b}']`).dataset['number'] = 'm_clicked';    
+    document.querySelector(`.cell[data-position='${a},${b}']`).dataset['number'] = 'm_clicked';
     clearInterval(timer);
     timer_time = 0;
     timer = null;
     setFace(face_died)
     gameState = 'died';
-    if(sound == 'on'){
+    if (sound == 'on') {
         sound_bomb.play();
     }
 }
 
-const win =_=>{
-    if(gameState == 'died'){
+const win = _ => {
+    if (gameState == 'died') {
         return;
     }
     setFace(face_clear);
     const width = Number(localStorage.getItem('size').split('x')[0]);
     const height = Number(localStorage.getItem('size').split('x')[0]);
-    for(let x = 0; x < width; x++){
-        for(let y = 0; y < height; y++){
-            if(document.querySelector(`.cell[data-position='${x},${y}']`) == null){
+    for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
+            if (document.querySelector(`.cell[data-position='${x},${y}']`) == null) {
                 continue;
             }
-            if(getCell(x, y) == 'm'){
+            if (getCell(x, y) == 'm') {
                 document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] = 'flag';
             }
         }
     }
     gameState = 'win';
-    if(sound == 'on'){
+    if (sound == 'on') {
         sound_win.play();
     }
 }
 
 tempTarget = null;
-window.addEventListener('mousemove', e =>{
-    if(!mouseDown) return;
-    if(tempTarget != null){
+window.addEventListener('mousemove', e => {
+    if (!mouseDown) return;
+    if (tempTarget != null) {
         fakeWindow.style.left = (e.clientX - startX + 'px');
         fakeWindow.style.top = (e.clientY - startY + 'px');
     }
-    if(e.target == title){
+    if (e.target == title) {
         tempTarget = e.target;
     }
-    if(gameState != 'play'){
+    if (gameState != 'play') {
         return;
     }
 
 
-    if(e.target.className.indexOf('cell') != -1 && e.which == 1){
-        if(e.target == clickedCell && e.target.dataset['state'] != 'flag'){
+    if (e.target.className.indexOf('cell') != -1 && e.which == 1) {
+        if (e.target == clickedCell && e.target.dataset['state'] != 'flag') {
             e.target.classList.add('empty');
-        }else{
-            if(clickedCell != null){
+        } else {
+            if (clickedCell != null) {
                 clickedCell.classList.remove('empty');
                 clickedCell = e.target;
             }
         }
-    }else{
-        if(clickedCell != null){
+    } else {
+        if (clickedCell != null) {
             clickedCell.classList.remove('empty');
         }
     }
 })
 
-face.addEventListener('mousedown', e=>{
-    if(e.which == 3) return;
+face.addEventListener('mousedown', e => {
+    if (e.which == 3) return;
     faceCursor = true;
     tempFace = face.innerHTML;
     face.innerHTML = `<img src=${face_click.src}>`;
 })
-face.addEventListener('mousemove', e=>{
-    if(e.which == 3) return;
-    if(!faceCursor) return;
+face.addEventListener('mousemove', e => {
+    if (e.which == 3) return;
+    if (!faceCursor) return;
     face.innerHTML = `<img src=${face_click.src}>`;
 })
-face.addEventListener('mouseleave', e=>{
-    if(e.which == 3) return;
-    if(!faceCursor) return;
+face.addEventListener('mouseleave', e => {
+    if (e.which == 3) return;
+    if (!faceCursor) return;
     face.innerHTML = tempFace;
 })
-face.addEventListener('mouseup', e=>{
-    if(e.which == 3) return;
+face.addEventListener('mouseup', e => {
+    if (e.which == 3) return;
     faceCursor = false;
     newGame();
     setFace(face_default);
 })
 
-const setRemain = num =>{
+const setRemain = num => {
     setNumber(remain, num);
 }
-const setTime = num =>{
-    if(gameState != 'play') return;
-    if(num > 0){
-        if(sound == 'on'){
+const setTime = num => {
+    if (gameState != 'play') return;
+    if (num > 0) {
+        if (sound == 'on') {
             sound_tick.play();
         }
     }
     setNumber(time, num);
 }
-const setFace = face_ =>{
-    if(gameState == 'play'){
+const setFace = face_ => {
+    if (gameState == 'play') {
         face.innerHTML = `<img src=${face_.src}>`;
     }
 }
 
-const setNumber = (parent, num) =>{
-    if(num > 999){
+const setNumber = (parent, num) => {
+    if (num > 999) {
         num = 999;
     }
-    if(num < -99){
+    if (num < -99) {
         num = -99;
     }
     parent.innerHTML = '';
     num = num + "";
-    if(num.toString().length == 2){
-        if(num < 0){
+    if (num.toString().length == 2) {
+        if (num < 0) {
             num = "-0" + Math.abs(num);
-        }else{
+        } else {
             num = "0" + num;
         }
     }
-    if(num.toString().length == 1){
-        if(num < 0){
+    if (num.toString().length == 1) {
+        if (num < 0) {
             num = "-" + Math.abs(num);
-        }else{
+        } else {
             num = "00" + num;
         }
     }
-    const add = `<img src=${numbers[num[0] >= 0 ? 0 : 10].src}><img src=${numbers[num[1]].src}><img src='${numbers[num[2]].src}'>`;
+
+    const add = `<img src=${numbers[num[0] >= 0 ? num[0] : 10].src}><img src=${numbers[num[1]].src}><img src='${numbers[num[2]].src}'>`;
     parent.innerHTML = add;
 }
 
-const newGame =_=>{
+const newGame = _ => {
     firstClick = false;
     createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
 }
 
-window.addEventListener('keydown', e =>{
-    if(e.key == 'F2'){
+window.addEventListener('keydown', e => {
+    if (e.key == 'F2') {
         newGame();
     }
 })
 
-const getCell = (x, y) =>{
-    if(x < 0 || y < 0) return undefined;
-    if(table[y] == undefined || table[y][x] == undefined) return undefined;
+const getCell = (x, y) => {
+    if (x < 0 || y < 0) return undefined;
+    if (table[y] == undefined || table[y][x] == undefined) return undefined;
     return table[y][x];
 }
-const setCell = (x, y, value) =>{
-    if(table[y] == undefined) return;
+const setCell = (x, y, value) => {
+    if (table[y] == undefined) return;
     table[y][x] = value;
 }
 
-const switchSound = _ =>{
+const switchSound = _ => {
     sound = sound == 'on' ? 'off' : 'on';
     const cl = document.querySelector('#sound').classList;
     sound == 'on' ? cl.add('checked') : cl.remove('checked');
@@ -435,46 +437,46 @@ const switchSound = _ =>{
     localStorage.setItem('sound', sound);
 }
 
-const setBoard =(mineCount)=>{
+const setBoard = (mineCount) => {
     const width = Number(localStorage.getItem('size').split('x')[0]);
     const height = Number(localStorage.getItem('size').split('x')[0]);
-    const maxMine = (width-1) * (height-1);
+    const maxMine = (width - 1) * (height - 1);
     mineCount = mineCount < maxMine ? mineCount : maxMine;
     localStorage.setItem('mineCount', mineCount);
     setRemain(mineCount);
     setTime(0);
-    for(let i = 0; i < mineCount; i++){
+    for (let i = 0; i < mineCount; i++) {
         table[i] = 'm';
     }
     let ln = 0;
-    table.sort(_=>[0.5 - Math.random()]);
-    table.sort(_=>[0.5 - Math.random()]);
-    table.sort(_=>[0.5 - Math.random()]);
+    table.sort(_ => [0.5 - Math.random()]);
+    table.sort(_ => [0.5 - Math.random()]);
+    table.sort(_ => [0.5 - Math.random()]);
     const tempTable = table;
     table = [];
-    for(let y = 0;  y < height; y++){
+    for (let y = 0; y < height; y++) {
         table[y] = [];
-        for(let x = 0 ; x < width; x++){
+        for (let x = 0; x < width; x++) {
             table[y].push(tempTable[ln] + '');
             ln++;
         }
     }
-    for(let x = 0;  x < width; x++){
-        for(let y = 0 ; y < height; y++){
+    for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height; y++) {
             let n = 0;
-            if(getCell(x, y) == 'm') {
+            if (getCell(x, y) == 'm') {
                 continue;
             }
-            if(getCell(x-1, y-1) == 'm') n++;
-            if(getCell(x, y-1) == 'm') n++;
-            if(getCell(x+1, y-1) == 'm') n++;
+            if (getCell(x - 1, y - 1) == 'm') n++;
+            if (getCell(x, y - 1) == 'm') n++;
+            if (getCell(x + 1, y - 1) == 'm') n++;
 
-            if(getCell(x-1, y) == 'm') n++;
-            if(getCell(x+1, y) == 'm') n++;
+            if (getCell(x - 1, y) == 'm') n++;
+            if (getCell(x + 1, y) == 'm') n++;
 
-            if(getCell(x-1, y+1) == 'm') n++;
-            if(getCell(x, y+1) == 'm') n++;
-            if(getCell(x+1, y+1) == 'm') n++;
+            if (getCell(x - 1, y + 1) == 'm') n++;
+            if (getCell(x, y + 1) == 'm') n++;
+            if (getCell(x + 1, y + 1) == 'm') n++;
             setCell(x, y, n + '');
         }
     }
@@ -483,11 +485,11 @@ const setBoard =(mineCount)=>{
 
 window.onload = e => {
     preload();
-    if(localStorage.getItem('size') == undefined){
+    if (localStorage.getItem('size') == undefined) {
         localStorage.setItem('size', '9x9');
     }
     document.querySelector(`#${level}`).classList.add('checked');
-    if(sound == 'on'){
+    if (sound == 'on') {
         document.querySelector('#sound').classList.add('checked');
     }
     createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
