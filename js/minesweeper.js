@@ -291,6 +291,7 @@ const win = _ => {
         return;
     }
     setFace(face_clear);
+    setRemain(0);
     const width = Number(localStorage.getItem('size').split('x')[0]);
     const height = Number(localStorage.getItem('size').split('x')[0]);
     for (let x = 0; x < width; x++) {
