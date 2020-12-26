@@ -46,13 +46,7 @@ img{
     float:left;
     box-sizing: border-box;
 }
-/*
-#menu > div.show:hover{
-    margin-top:3px;
-    background-color:rgb(204,232,255);
-    border:1px solid rgb(153,209,255);
-}
-*/
+
 #menu > div:hover{
     margin-top:3px;
     height:19px;
@@ -162,6 +156,9 @@ img{
 #window{
     position: absolute;
     border:1px solid rgb(24, 131, 215);
+    -webkit-box-shadow: 0px 0px 8px 0px rgba(182,182,182,1);
+    -moz-box-shadow: 0px 0px 8px 0px rgba(182,182,182,1);
+    box-shadow: 0px 0px 8px 0px rgba(182,182,182,1);
 }
 #board{
     position: absolute;
@@ -243,43 +240,43 @@ img{
     background-position:0px 0px;
 }
 .cell[data-state='flag']{
-    background-image: url('images/flag.png');
+    background-image: url('../images/flag.png');
 }
 .cell[data-state='qm']{
-    background-image: url('images/qm.png');
+    background-image: url('../images/qm.png');
 }
 .cell[data-number='1']{
-    background-image: url('images/m_1.png');
+    background-image: url('../images/m_1.png');
 }
 .cell[data-number='2']{
-    background-image: url('images/m_2.png');
+    background-image: url('../images/m_2.png');
 }
 .cell[data-number='3']{
-    background-image: url('images/m_3.png');
+    background-image: url('../images/m_3.png');
 }
 .cell[data-number='4']{
-    background-image: url('images/m_4.png');
+    background-image: url('../images/m_4.png');
 }
 .cell[data-number='5']{
-    background-image: url('images/m_5.png');
+    background-image: url('../images/m_5.png');
 }
 .cell[data-number='6']{
-    background-image: url('images/m_6.png');
+    background-image: url('../images/m_6.png');
 }
 .cell[data-number='7']{
-    background-image: url('images/m_7.png');
+    background-image: url('../images/m_7.png');
 }
 .cell[data-number='8']{
-    background-image: url('images/m_8.png');
+    background-image: url('../images/m_8.png');
 }
 .cell[data-number='m']{
-    background-image: url('images/mine_default.png');
+    background-image: url('../images/mine_default.png');
 }
 .cell[data-number='m_clicked']{
-    background-image: url('images/mine_clicked.png');
+    background-image: url('../images/mine_clicked.png');
 }
 .cell[data-number='m_flaged']{
-    background-image: url('images/mine_x.png');
+    background-image: url('../images/mine_x.png');
 }
 
 .linebreak{
