@@ -1,0 +1,264 @@
+*{
+    margin:0;
+    border:0;
+    padding: 0;
+    user-select: none; 
+    list-style: none;
+    font-size:13px;
+    font-family:sans-serif;
+}
+
+html, body{
+    width:100%;
+    height:100%;
+    overflow: hidden;
+    pointer-events:unset;
+}
+
+img{
+    pointer-events:none;
+}
+
+#game{
+    position: absolute;
+    background-color:rgb(192,192,192);
+    top:48px;
+    right:0;
+}
+#title{
+    height:22px;
+    width:100%;
+    background-color: white;
+}
+
+#menu{
+    height:21px;
+    width:100%;
+    border-bottom: 2px solid rgb(240,240,240);
+}
+
+#menu > div{
+    margin-top:4px;
+    display:block;
+    height:19px;
+    line-height:15px;
+    text-align: center;
+    float:left;
+    box-sizing: border-box;
+}
+/*
+#menu > div.show:hover{
+    margin-top:3px;
+    background-color:rgb(204,232,255);
+    border:1px solid rgb(153,209,255);
+}
+*/
+#menu > div:hover{
+    margin-top:3px;
+    height:19px;
+    background-color:rgb(229,243,255);
+    border:1px solid rgb(204, 232, 255);
+}
+
+#menu div:hover ul{
+    position: relative;
+    z-index: 10;
+    display:block;
+}
+#menu ul{
+    margin-left:-1px;
+    margin-top:3px;
+    width:168px;
+    height:246px;
+    background-color:rgb(242,242,242);
+    display:none;
+    border: 1px solid rgb(204,204,204);
+}
+
+#menu > div:nth-child(1){
+    width:45px;
+}
+
+#menu li{
+    text-align:left;
+    display:inline-flex;
+    width:164px;
+    height:22px;
+    line-height: 22px;
+    white-space: pre;
+    margin-top:-2px;
+}
+
+#menu .menu_help{
+    width:217px;
+    height:98px;
+}
+#menu .menu_help li{
+    width:213px;
+}
+
+#menu li:hover{
+    background-color:rgba(86, 176, 250, 0.6);
+}
+#menu li::before{
+    content: '';
+    display:block;
+    width:22px;
+    height:22px;
+    margin-right:10px;
+    /*background-color:rgba(86, 176, 250, 0.6);*/
+}
+#menu li:first-child{
+    margin-top:2px;
+}
+#menu li.division::before{
+    display:block;
+    width:0px;
+}
+#menu li.division{
+    margin-left:30px;
+    display:block;
+    height:0px;
+    width:136px;
+    border-top:1px solid rgb(204,204,204);
+    margin-top:0.5px;
+}
+#menu li.division +li{
+    margin-top:2px;
+}
+#menu .menu_help li.division{
+    width:185px;
+}
+
+#menu > div:nth-child(2){
+    width:39px;
+}
+
+
+#window{
+    position: absolute;
+    border:1px solid rgb(24, 131, 215);
+}
+#board{
+    position: absolute;
+    right:5px;
+    bottom:5px;
+    border-top:3px solid  rgb(128,128,128);
+    border-left:3px solid  rgb(128,128,128); 
+    border-right:3px solid white;
+    border-bottom:3px solid white;
+    margin-left:6px;
+    display:flex;
+    flex-wrap: wrap;
+}
+#condition{
+    position: absolute;
+    box-sizing: border-box;
+    height:37px;
+    right:5px;
+    top:6px;
+    
+    border-top:2px solid  rgb(128,128,128);
+    border-left:2px solid  rgb(128,128,128); 
+    border-right:2px solid white;
+    border-bottom:2px solid white;
+}
+#remain, #time{
+    position: absolute;
+    top:4px;
+    width:41px;
+    height:25px;    
+    background: black;
+    box-sizing: border-box;
+    border-top:1px solid  rgb(128,128,128);
+    border-left:1px solid  rgb(128,128,128); 
+    border-right:1px solid white;
+    border-bottom:1px solid white;
+}
+#remain img, #time img{
+    margin:1px;
+}
+#remain{
+    left:5px;
+}
+#time{
+    right:5px;
+}
+#face{
+    position: absolute;
+    width:24px;
+    height:24px;
+    top:4px;
+    left:50%;
+    transform: translate(-50%);
+    background-color:rgb(192,192,192);
+    border:1px solid  rgb(128,128,128);
+}
+.cell{
+    width: 16px;
+    height:16px;
+    background-color:rgb(192,192,192);
+    border-top:2px solid white;
+    border-left:2px solid white;
+    border-right:2px solid rgb(128,128,128);
+    border-bottom:2px solid rgb(128,128,128);
+    box-sizing: border-box;
+    z-index:2;
+}
+.cell.empty{
+    border:0;
+    border-left:1px solid rgb(128,128,128);
+    border-top:1px solid rgb(128,128,128);
+    z-index:1;
+}
+.cell[data-number]{
+    border:0;
+    border-left:1px solid rgb(128,128,128);
+    border-top:1px solid rgb(128,128,128);
+    z-index:1;
+    background-position:0px 0px;
+}
+.cell[data-state='flag']{
+    background-image: url('images/flag.png');
+}
+.cell[data-state='qm']{
+    background-image: url('images/qm.png');
+}
+.cell[data-number='1']{
+    background-image: url('images/m_1.png');
+}
+.cell[data-number='2']{
+    background-image: url('images/m_2.png');
+}
+.cell[data-number='3']{
+    background-image: url('images/m_3.png');
+}
+.cell[data-number='4']{
+    background-image: url('images/m_4.png');
+}
+.cell[data-number='5']{
+    background-image: url('images/m_5.png');
+}
+.cell[data-number='6']{
+    background-image: url('images/m_6.png');
+}
+.cell[data-number='7']{
+    background-image: url('images/m_7.png');
+}
+.cell[data-number='8']{
+    background-image: url('images/m_8.png');
+}
+.cell[data-number='m']{
+    background-image: url('images/mine_default.png');
+}
+.cell[data-number='m_clicked']{
+    background-image: url('images/mine_clicked.png');
+}
+.cell[data-number='m_flaged']{
+    background-image: url('images/mine_x.png');
+}
+
+.linebreak{
+    flex-basis: 100%;
+    height: 0;
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='style.css'>
+    <title>Minesweeper</title>
+</head>
+<body>
+    <div id='window'>
+        <div id='title'><img src='images/Title.png'></div>
+        <div id='menu'>
+            <div>Game
+                <ul class='menu_game'>
+                    <li id='newgame' onclick="newGame()">New</li>
+                    <li class='division'></li>
+                    <li id='beginner' onclick="createTable(9,9,10)">Beginner</li>
+                    <li id='intermediate' onclick="createTable(16,16,40)">Intermediate</li>
+                    <li id='expert' onclick="createTable(30,24,99)">Expert</li>
+                    <li>Custom...</li>
+                    <li class='division'></li>
+                    <li>Marks (?)</li>
+                    <li>Color</li>
+                    <li>Sound</li>
+                    <li class='division'></li>
+                    <li>Best Times...</li>
+                    <li class='division'></li>
+                    <li>Exit</li>
+                </ul>
+            </div>
+            <div>Help
+                <ul class='menu_help'>
+                    <li>Content</li>
+                    <li>Search for Help on...</li>
+                    <li>Using Help</li>
+                    <li class='division'></li>
+                    <li>Abount Minesweeper...</li>
+                </ul>
+            </div>
+        </div>
+        <div id='game'>
+            <div id='condition'>
+                <div id='remain'>
+                </div>
+                <div id='face'>
+                    
+                </div>
+                <div id='time'></div>
+            </div>
+            <div id='board'></div>
+        </div>
+    </div>
+
+    <script src='minesweeper.js'></script>
+</body>
+</html>
