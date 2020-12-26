@@ -181,42 +181,43 @@ document.body.addEventListener('mouseup', e => {
         return;
     }
     clickState -= e.which;
-    if (e.which == 3) return;
-
+    console.log(clickState)
     if (gameState != 'play') return;
     if (e.target.className.indexOf('cell') != -1) {
-        if (firstClick == false) {
-            while (true) {
-                if (getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0') {
-                    createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
-                } else {
-                    break;
+        if(e.which == 1){
+            if (firstClick == false) {
+                while (true) {
+                    if (getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0') {
+                        createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
+                    } else {
+                        break;
+                    }
+                }
+                firstClick = true;
+            }
+            setFace(face_default)
+            if (timer == null) {
+                timer_time++;
+                if (sound == 'on') {
+                    sound_tick.play();
+                }
+                setTime(timer_time)
+                timer = setInterval(function () {
+                    timer_time++;
+                    setTime(timer_time)
+                }, 1000);
+            }
+            fill(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1]));
+            const cells = document.querySelectorAll('.cell');
+            let c = 0;
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].dataset['number'] != undefined) {
+                    c++;
                 }
             }
-            firstClick = true;
-        }
-        setFace(face_default)
-        if (timer == null) {
-            timer_time++;
-            if (sound == 'on') {
-                sound_tick.play();
+            if (c == cells.length - mineCount) {
+                win();
             }
-            setTime(timer_time)
-            timer = setInterval(function () {
-                timer_time++;
-                setTime(timer_time)
-            }, 1000);
-        }
-        fill(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1]));
-        const cells = document.querySelectorAll('.cell');
-        let c = 0;
-        for (let i = 0; i < cells.length; i++) {
-            if (cells[i].dataset['number'] != undefined) {
-                c++;
-            }
-        }
-        if (c == cells.length - mineCount) {
-            win();
         }
     }
 
