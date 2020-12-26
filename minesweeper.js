@@ -393,7 +393,7 @@ const setBoard =(mineCount)=>{
             setCell(x, y, n + '');
         }
     }
-    console.table(table);
+//console.table(table);
 }
 
 
