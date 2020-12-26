@@ -37,6 +37,7 @@ const preload =_=> {
     }
     numbers[10] = new Image();
     numbers[10].src = 'images/-.png';
+
     face_default = new Image();
     face_default.src = 'images/face_default.png';
 
@@ -59,8 +60,8 @@ window.oncontextmenu = e => {
 let boardArray = [];
 
 const createTable = (width, height, mine) => {
-    width = width < min_width ? 9 : width > max_width ? 30 : width;
-    height = height < min_height ? 9 : height > max_height ? 30 : height;
+    width = width < min_width ? min_width : width > max_width ? max_width : width;
+    height = height < min_height ? min_height : height > max_height ? max_height : height;
     mineCount = mine;
     localStorage.setItem('mineCount', mineCount);
     localStorage.setItem('size', width+'x'+height);
@@ -148,6 +149,7 @@ let firstClick = false;
 let timer_time = 0;
 let timer = null;
 document.body.addEventListener('mouseup', e => {
+    console.log(e.target);
     if(e.target == document.body){   
         mouseDown = false;
         tempTarget = null;
@@ -189,7 +191,7 @@ const fill = (x, y)=>{
         return;
     }
     const target = document.querySelector(`.cell[data-position='${x},${y}']`);
-    if(target.dataset['number'] != undefined && target.dataset['number'] != '-1'){
+    if(target == null || target.dataset['number'] != undefined && target.dataset['number'] != '-1'){
         return;
     }
     if(target.dataset['state'] == 'flag'){
@@ -223,10 +225,12 @@ const lose = (a,b) =>{
     const height = Number(localStorage.getItem('size').split('x')[0]);
     for(let x = 0; x < width; x++){
         for(let y = 0; y < height; y++){
-            //document.querySelector(`.cell[data-position='${x},${y}']`).dataset['number'] = getCell(x, y);
+            if(document.querySelector(`.cell[data-position='${x},${y}']`) == null){
+                continue;
+            }
             if(document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] == 'flag' && getCell(x, y) != 'm'){
                 document.querySelector(`.cell[data-position='${x},${y}']`).dataset['number'] = 'm_flaged';
-            }else if(getCell(x, y) == 'm'){
+            }else if(getCell(x, y) == 'm' && document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] != 'flag'){
                 document.querySelector(`.cell[data-position='${x},${y}']`).dataset['number'] = 'm';
             }
         }
