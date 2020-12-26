@@ -23,7 +23,7 @@ let level = 'beginner';
 const min_width = 9;
 const min_height = 9;
 const max_width = 30;
-const max_height = 24;
+const max_height = 16;
 
 
 let numbers=[[]];
@@ -149,7 +149,6 @@ let firstClick = false;
 let timer_time = 0;
 let timer = null;
 document.body.addEventListener('mouseup', e => {
-    console.log(e.target);
     if(e.target == document.body){   
         mouseDown = false;
         tempTarget = null;
@@ -368,6 +367,8 @@ const setBoard =(mineCount)=>{
         table[i] = 'm';
     }
     let ln = 0;
+    table.sort(_=>[0.5 - Math.random()]);
+    table.sort(_=>[0.5 - Math.random()]);
     table.sort(_=>[0.5 - Math.random()]);
     const tempTable = table;
     table = [];
