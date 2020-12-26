@@ -12,16 +12,16 @@
         <div id='menu'>
             <div>Game
                 <ul class='menu_game'>
-                    <li id='newgame' onclick="newGame()">New</li>
+                    <li id='newgame' onclick="newGame();">New<span class='shortcut'>F2</span></li>
                     <li class='division'></li>
-                    <li id='beginner' onclick="createTable(9,9,10)">Beginner</li>
-                    <li id='intermediate' onclick="createTable(16,16,40)">Intermediate</li>
-                    <li id='expert' onclick="createTable(30,16,99)">Expert</li>
+                    <li class='level' id='beginner' onclick="localStorage.setItem('level', 'beginner'); createTable(9,9,10);">Beginner</li>
+                    <li class='level' id='intermediate' onclick="localStorage.setItem('level', 'intermediate'); createTable(16,16,40);">Intermediate</li>
+                    <li class='level' id='expert' onclick="localStorage.setItem('level', 'expert'); createTable(30,16,99);">Expert</li>
                     <li>Custom...</li>
                     <li class='division'></li>
                     <li>Marks (?)</li>
                     <li>Color</li>
-                    <li>Sound</li>
+                    <li id='sound' onclick="switchSound(this);">Sound</li>
                     <li class='division'></li>
                     <li>Best Times...</li>
                     <li class='division'></li>

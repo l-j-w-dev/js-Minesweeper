@@ -15,8 +15,9 @@ const expert = document.querySelector('#expert');
 const sound_tick = new Audio('sounds/tick.mp3')
 const sound_bomb = new Audio('sounds/bomb.mp3')
 const sound_win = new Audio('sounds/win.mp3')
-let mineCount = localStorage.getItem('mineCount') || 10;
+let mineCount = localStorage.getItem('mineCount') || 1;
 let level = localStorage.getItem('level') || 'beginner';
+let sound = localStorage.getItem('sound') || 'off';
 let table = [];
 const min_width = 9;
 const min_height = 9;
@@ -98,6 +99,12 @@ const createTable = (width, height, mine) => {
     setBoard(mine);
     menu_game.style.display = 'none';
     menu_help.style.display = 'none';
+    const levels = document.querySelectorAll('.level');
+    for(let i = 0; i < levels.length; i++){
+        levels[i].classList.remove('checked');
+    }
+    level = localStorage.getItem('level') || 'beginner';
+    document.querySelector(`#${level}`).classList.add('checked');
 }
 menu_help.parentNode.addEventListener('mouseover', e =>{
     menu_help.style.display = 'block';
@@ -177,20 +184,39 @@ document.body.addEventListener('mouseup', e => {
 
     if(gameState != 'play') return;
     if(e.target.className.indexOf('cell') != -1){
+        if(firstClick == false){
+            while(true){
+                if(getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0'){
+                    createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
+                }else{
+                    break;
+                }
+            }
+            firstClick = true;
+        }
         setFace(face_default)
         if(timer == null){
             timer_time++;
-            sound_tick.play();
+            if(sound == 'on'){
+                sound_tick.play();
+            }            
             setTime(timer_time)
             timer = setInterval(function(){
                 timer_time++;
-                sound_tick.play();
                 setTime(timer_time)
             },1000);
         }
-        //while(getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0'){
-        fill(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1]))
-        //}        
+        fill(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1]));
+        const cells = document.querySelectorAll('.cell');
+        let c = 0;
+        for(let i = 0; i < cells.length; i++){
+            if(cells[i].dataset['number'] != undefined){
+                c++;
+            }
+        }
+        if(c == cells.length - mineCount){
+            win();
+        }
     }
     
     mouseDown = false;
@@ -253,8 +279,34 @@ const lose = (a,b) =>{
     timer = null;
     setFace(face_died)
     gameState = 'died';
-    sound_bomb.play();
+    if(sound == 'on'){
+        sound_bomb.play();
+    }
 }
+
+const win =_=>{
+    if(gameState == 'died'){
+        return;
+    }
+    setFace(face_clear);
+    const width = Number(localStorage.getItem('size').split('x')[0]);
+    const height = Number(localStorage.getItem('size').split('x')[0]);
+    for(let x = 0; x < width; x++){
+        for(let y = 0; y < height; y++){
+            if(document.querySelector(`.cell[data-position='${x},${y}']`) == null){
+                continue;
+            }
+            if(getCell(x, y) == 'm'){
+                document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] = 'flag';
+            }
+        }
+    }
+    gameState = 'win';
+    if(sound == 'on'){
+        sound_win.play();
+    }
+}
+
 tempTarget = null;
 window.addEventListener('mousemove', e =>{
     if(!mouseDown) return;
@@ -270,7 +322,7 @@ window.addEventListener('mousemove', e =>{
     }
 
 
-    if(e.target.className.indexOf('cell') != -1){
+    if(e.target.className.indexOf('cell') != -1 && e.which == 1){
         if(e.target == clickedCell && e.target.dataset['state'] != 'flag'){
             e.target.classList.add('empty');
         }else{
@@ -315,7 +367,9 @@ const setRemain = num =>{
 const setTime = num =>{
     if(gameState != 'play') return;
     if(num > 0){
-        sound_tick.play();
+        if(sound == 'on'){
+            sound_tick.play();
+        }
     }
     setNumber(time, num);
 }
@@ -353,8 +407,15 @@ const setNumber = (parent, num) =>{
 }
 
 const newGame =_=>{
+    firstClick = false;
     createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
 }
+
+window.addEventListener('keydown', e =>{
+    if(e.key == 'F2'){
+        newGame();
+    }
+})
 
 const getCell = (x, y) =>{
     if(x < 0 || y < 0) return undefined;
@@ -364,6 +425,14 @@ const getCell = (x, y) =>{
 const setCell = (x, y, value) =>{
     if(table[y] == undefined) return;
     table[y][x] = value;
+}
+
+const switchSound = _ =>{
+    sound = sound == 'on' ? 'off' : 'on';
+    const cl = document.querySelector('#sound').classList;
+    sound == 'on' ? cl.add('checked') : cl.remove('checked');
+    menu_game.style.display = 'none';
+    localStorage.setItem('sound', sound);
 }
 
 const setBoard =(mineCount)=>{
@@ -409,7 +478,6 @@ const setBoard =(mineCount)=>{
             setCell(x, y, n + '');
         }
     }
-//console.table(table);
 }
 
 
@@ -418,9 +486,9 @@ window.onload = e => {
     if(localStorage.getItem('size') == undefined){
         localStorage.setItem('size', '9x9');
     }
-    if(localStorage.getItem('level') == undefined){
-        localStorage.setItem('level', 'beginner');
+    document.querySelector(`#${level}`).classList.add('checked');
+    if(sound == 'on'){
+        document.querySelector('#sound').classList.add('checked');
     }
-
     createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
 }
