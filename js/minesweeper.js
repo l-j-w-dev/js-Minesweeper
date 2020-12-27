@@ -232,7 +232,7 @@ document.body.addEventListener('mouseup', e => {
         console.log(arr8)
         if(clickedCell.dataset['number'] != undefined && Number(clickedCell.dataset['number']) == c - arr8.length){
             for(let i = 0; i < arr8.length; i++){
-                fill(arr8[i].dataset['position'].split(',')[0], arr8[i].dataset['position'].split(',')[1])
+                fill(Number(arr8[i].dataset['position'].split(',')[0]), Number(arr8[i].dataset['position'].split(',')[1]))
             }
         }
         
