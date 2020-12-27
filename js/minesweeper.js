@@ -131,11 +131,18 @@ let tempFace = null;
 let clickState = 0;
 let clickTimer = null;
 
+let leftDown = false;
+let rightDown = false;
+
+let arr3x3 = []
 document.body.addEventListener('mousedown', e => {
     if (e.target == document.body) return;
-    if (e.which != clickState) {
-        clickState += e.which;
+    if (e.which == 1) {
+        leftDown = true;
+    } else if (e.which == 3) {
+        rightDown = true;
     }
+
     startX = e.offsetX;
     startY = e.offsetY;
     mouseDown = true;
@@ -144,9 +151,14 @@ document.body.addEventListener('mousedown', e => {
     }
     if (e.target.className.indexOf('cell') != -1) {
         clickedCell = e.target;
-        if (e.which == 1) {
+        let posX = Number(clickedCell.dataset['position'].split(',')[0]);
+        let posY = Number(clickedCell.dataset['position'].split(',')[1]);
+        if (leftDown && !rightDown) {
+            if (clickedCell.dataset['state'] != 'flag') {
+                clickedCell.classList.add('empty');
+            }
             setFace(face_click_cell);
-        } else if (e.which == 3) {
+        } else if (rightDown && !leftDown) {
             if (clickedCell.dataset['number'] != undefined) {
                 return;
             }
@@ -159,6 +171,18 @@ document.body.addEventListener('mousedown', e => {
             }
             clickedCell = null;
             setRemain(mineCount - document.querySelectorAll('.cell[data-state="flag"]').length)
+        } else if (leftDown && rightDown) {
+            for(let x = -1; x <= 1; x++){
+                for(let y = -1; y <= 1; y++){
+                    if(x == 0 && y == 0){
+                        continue;
+                    }
+                    let k = document.querySelector(`.cell[data-position='${(posX + x)},${(posY + y)}']`);
+                    if (k != undefined && k.dataset['state'] != 'flag') {
+                        k.classList.add('empty');
+                    }
+                }
+            }
         }
     }
 })
@@ -166,25 +190,57 @@ let firstClick = false;
 let timer_time = 0;
 let timer = null;
 document.body.addEventListener('mouseup', e => {
-    if (gameState != 'play' || e.target == document.body) {
+    if (gameState != 'play' || e.target == document.body || e.target.fakeWindow) {
+        if (e.target == document.body) {
+            setFace(face_default);
+        }
         mouseDown = false;
         tempTarget = null;
         clickedCell = null;
         return;
     }
-    if (e.target == document.body) {
-        setFace(face_default);
-        return;
-    }
+
     if (faceCursor) {
         faceCursor = false;
         return;
     }
-    clickState -= e.which;
-    console.log(clickState)
     if (gameState != 'play') return;
-    if (e.target.className.indexOf('cell') != -1) {
-        if(e.which == 1){
+    if(leftDown && rightDown){
+        let posX = Number(clickedCell.dataset['position'].split(',')[0]);
+        let posY = Number(clickedCell.dataset['position'].split(',')[1]);
+        let arr8 = [];
+        for(let x = -1; x <= 1; x++){
+            for(let y = -1; y <= 1; y++){
+                if(x == 0 && y == 0){
+                    continue;
+                }
+                let k = document.querySelector(`.cell[data-position='${(posX + x)},${(posY + y)}']`);
+                if (k != undefined && k.dataset['state'] != 'flag') {
+                    console.log(k);
+                    arr8.push(k);
+                }
+            }
+        }
+        let emptyCells = document.querySelectorAll('.cell.empty');
+        for(let i = 0; i < emptyCells.length; i++){
+            emptyCells[i].classList.remove('empty');
+        }
+        if(clickedCell.dataset['number'] != undefined && Number(clickedCell.dataset['number']) == 8 - arr8.length){
+            for(let i = 0; i < arr8.length; i++){
+                fill(arr8[i].dataset['position'].split(',')[0], arr8[i].dataset['position'].split(',')[1])
+            }
+        }
+        
+
+        leftDown = false;
+        rightDown = false;
+        clickedCell = null;
+        tempTarget = null;
+        mouseDown = false;
+        return;
+    }
+    if (e.which == 1) {
+        if (e.target.className.indexOf('cell') != -1) {
             if (firstClick == false) {
                 while (true) {
                     if (getCell(Number(e.target.dataset['position'].split(',')[0]), Number(e.target.dataset['position'].split(',')[1])) != '0') {
@@ -219,11 +275,14 @@ document.body.addEventListener('mouseup', e => {
                 win();
             }
         }
+        leftDown = false;
+        clickedCell = null;
+        tempTarget = null;
+        mouseDown = false;
     }
-
-    mouseDown = false;
-    tempTarget = null;
-    clickedCell = null;
+    if (e.which == 3) {
+        rightDown = false;
+    }
 })
 
 const fill = (x, y) => {
@@ -322,6 +381,27 @@ window.addEventListener('mousemove', e => {
     }
     if (gameState != 'play') {
         return;
+    }
+    if(leftDown && rightDown){
+        /*
+        let posX = Number(clickedCell.dataset['position'].split(',')[0]);
+        let posY = Number(clickedCell.dataset['position'].split(',')[1]);
+        for(let x = -1; x <= 1; x++){
+            for(let y = -1; y <= 1; y++){
+                if(x == 0 && y == 0){
+                    continue;
+                }
+                let k = document.querySelector(`.cell[data-position='${(posX + x)},${(posY + y)}']`);
+                if (k != undefined && k.dataset['state'] != 'flag') {
+                    k.classList.add('empty');
+                }
+            }
+        }
+        let emptyCells = document.querySelectorAll('.cell.empty');
+        for(let i = 0; i < emptyCells.length; i++){
+            emptyCells[i].classList.remove('empty');
+        }
+        */
     }
 
 
