@@ -244,6 +244,11 @@ img{
 }
 .cell[data-state='qm']{
     background-image: url('../images/qm.png');
+    background-repeat: no-repeat;
+}
+.cell.empty[data-state='qm']{
+    background-position-x: 2px;
+    background-position-y: 2px;
 }
 .cell[data-number='1']{
     background-image: url('../images/m_1.png');

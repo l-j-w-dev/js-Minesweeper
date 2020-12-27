@@ -178,7 +178,7 @@ document.body.addEventListener('mousedown', e => {
                         continue;
                     }
                     let k = document.querySelector(`.cell[data-position='${(posX + x)},${(posY + y)}']`);
-                    if (k != undefined && k.dataset['state'] != 'flag') {
+                    if (k != undefined && k.dataset['state'] != 'flag' && k.dataset['number'] == undefined) {
                         k.classList.add('empty');
                     }
                 }
@@ -205,10 +205,11 @@ document.body.addEventListener('mouseup', e => {
         return;
     }
     if (gameState != 'play') return;
-    if(leftDown && rightDown){
+    if(leftDown && rightDown && clickedCell != undefined){
         let posX = Number(clickedCell.dataset['position'].split(',')[0]);
         let posY = Number(clickedCell.dataset['position'].split(',')[1]);
         let arr8 = [];
+        let c = 8;
         for(let x = -1; x <= 1; x++){
             for(let y = -1; y <= 1; y++){
                 if(x == 0 && y == 0){
@@ -216,8 +217,11 @@ document.body.addEventListener('mouseup', e => {
                 }
                 let k = document.querySelector(`.cell[data-position='${(posX + x)},${(posY + y)}']`);
                 if (k != undefined && k.dataset['state'] != 'flag') {
-                    console.log(k);
                     arr8.push(k);
+                }else{
+                    if(k == undefined){
+                        c--;
+                    }
                 }
             }
         }
@@ -225,7 +229,8 @@ document.body.addEventListener('mouseup', e => {
         for(let i = 0; i < emptyCells.length; i++){
             emptyCells[i].classList.remove('empty');
         }
-        if(clickedCell.dataset['number'] != undefined && Number(clickedCell.dataset['number']) == 8 - arr8.length){
+        console.log(arr8)
+        if(clickedCell.dataset['number'] != undefined && Number(clickedCell.dataset['number']) == c - arr8.length){
             for(let i = 0; i < arr8.length; i++){
                 fill(arr8[i].dataset['position'].split(',')[0], arr8[i].dataset['position'].split(',')[1])
             }
@@ -340,6 +345,8 @@ const lose = (a, b) => {
     timer = null;
     setFace(face_died)
     gameState = 'died';
+    leftDown = false;
+    rightDown = false;
     if (sound == 'on') {
         sound_bomb.play();
     }
@@ -362,7 +369,9 @@ const win = _ => {
                 document.querySelector(`.cell[data-position='${x},${y}']`).dataset['state'] = 'flag';
             }
         }
-    }
+    }        
+    leftDown = false;
+    rightDown = false;
     gameState = 'win';
     if (sound == 'on') {
         sound_win.play();
@@ -492,6 +501,9 @@ const setNumber = (parent, num) => {
 
 const newGame = _ => {
     firstClick = false;
+    leftDown = false;
+    rightDown = false;
+    mouseDown = false;
     createTable(localStorage.getItem('size').split('x')[0], localStorage.getItem('size').split('x')[1], mineCount);
 }
 
